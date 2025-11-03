@@ -30,7 +30,7 @@ public class MallService {
     }
 
     public void deleteMall(String id) {
-        repository.delete(id);
+        repository.deleteById(id);
     }
 
     public Mall getMallById(String id) {

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Adaugă Agent de Securitate</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        form { max-width: 400px; background: #f9f9f9; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input { width: 100%; padding: 6px; margin-top: 4px; }
+        button { margin-top: 15px; padding: 8px 16px; background-color: #2ecc71; border: none; color: white; cursor: pointer; border-radius: 5px; }
+        button:hover { background-color: #27ae60; }
+        a { display: inline-block; margin-top: 10px; text-decoration: none; color: #2980b9; }
+    </style>
+</head>
+<body>
+<h1>Adaugă Agent de Securitate</h1>
+
+<form th:action="@{/security-staff}" th:object="${securityStaff}" method="post">
+    <label>ID:</label>
+    <input type="text" th:field="*{id}" required>
+
+    <label>Nume:</label>
+    <input type="text" th:field="*{name}" required>
+
+    <label>Număr Legitimație (Badge No):</label>
+    <input type="text" th:field="*{badgeNo}" required>
+
+    <button type="submit">💾 Salvează</button>
+</form>
+
+<a th:href="@{/security-staff}">← Înapoi la listă</a>
+
+</body>
+</html>

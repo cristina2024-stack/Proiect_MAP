@@ -1,88 +1,48 @@
 package com.example.mall_management.controller;
 
 import com.example.mall_management.model.ElectricalAsset;
+import com.example.mall_management.service.ElectricalAssetService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-@RestController
+@Controller
 @RequestMapping("/electrical-assets")
 public class ElectricalAssetController {
-    private List<ElectricalAsset> assets = new ArrayList<>();
+
+    private final ElectricalAssetService assetService;
+
+    public ElectricalAssetController(ElectricalAssetService assetService) {
+        this.assetService = assetService;
+    }
+
 
     @GetMapping
-    public List<ElectricalAsset> getAllAssets() {
-        return assets;
+    public String listAssets(Model model) {
+        model.addAttribute("assets", assetService.getAllAssets());
+        return "electrical-asset/index"; // templates/electrical-asset/index.html
     }
 
-    @GetMapping("/{id}")
-    public Optional<ElectricalAsset> getAssetById(@PathVariable String id) {
-        return assets.stream()
-                .filter(a -> a.getId().equals(id))
-                .findFirst();
+
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("asset", new ElectricalAsset());
+        model.addAttribute("types", ElectricalAsset.Type.values());
+        model.addAttribute("statuses", ElectricalAsset.AssetStatus.values());
+        return "electrical-asset/form"; // templates/electrical-asset/form.html
     }
+
 
     @PostMapping
-    public ElectricalAsset addAsset(@RequestBody ElectricalAsset asset) {
-        assets.add(asset);
-        return asset;
+    public String createAsset(@ModelAttribute("asset") ElectricalAsset asset) {
+        assetService.addAsset(asset);
+        return "redirect:/electrical-assets";
     }
 
-    @PutMapping("/{id}")
-    public ElectricalAsset updateAsset(@PathVariable String id, @RequestBody ElectricalAsset updatedAsset) {
-        for (int i = 0; i < assets.size(); i++) {
-            if (assets.get(i).getId().equals(id)) {
-                assets.set(i, updatedAsset);
-                return updatedAsset;
-            }
-        }
-        assets.add(updatedAsset);
-        return updatedAsset;
-    }
 
-    @DeleteMapping("/{id}")
+    @PostMapping("/{id}/delete")
     public String deleteAsset(@PathVariable String id) {
-        boolean removed = assets.removeIf(a -> a.getId().equals(id));
-        return removed ? "Electrical asset deleted successfully." : "Asset not found.";
-    }
-
-
-    @GetMapping("/floor/{floorId}")
-    public List<ElectricalAsset> getAssetsByFloor(@PathVariable String floorId) {
-        List<ElectricalAsset> result = new ArrayList<>();
-        for (ElectricalAsset a : assets) {
-            if (a.getFloorId().equals(floorId)) {
-                result.add(a);
-            }
-        }
-        return result;
-    }
-
-    @GetMapping("/type/{type}")
-    public List<ElectricalAsset> getAssetsByType(@PathVariable ElectricalAsset.Type type) {
-        List<ElectricalAsset> result = new ArrayList<>();
-        for (ElectricalAsset a : assets) {
-            if (a.getType() == type) {
-                result.add(a);
-            }
-        }
-        return result;
-    }
-
-    @PatchMapping("/{id}/status")
-    public String updateAssetStatus(@PathVariable String id, @RequestParam ElectricalAsset.AssetStatus status) {
-        Optional<ElectricalAsset> assetOpt = assets.stream()
-                .filter(a -> a.getId().equals(id))
-                .findFirst();
-
-        if (assetOpt.isPresent()) {
-            assetOpt.get().setStatus(status);
-            return "Asset status updated successfully.";
-        } else {
-            return "Asset not found.";
-        }
+        assetService.deleteAsset(id);
+        return "redirect:/electrical-assets";
     }
 }
-

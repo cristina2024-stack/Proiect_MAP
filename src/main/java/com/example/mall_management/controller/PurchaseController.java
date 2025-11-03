@@ -1,74 +1,46 @@
 package com.example.mall_management.controller;
 
 import com.example.mall_management.model.Purchase;
+import com.example.mall_management.service.PurchaseService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-@RestController
+//Cand vine o cerere catre URL-ul (/purchases) apeleaza metodele corespunzatoare din acest controller
+@Controller
 @RequestMapping("/purchases")
 public class PurchaseController {
 
-    private List<Purchase> purchases = new ArrayList<>();
+    private final PurchaseService purchaseService;
 
+    public PurchaseController(PurchaseService purchaseService) {
+        this.purchaseService = purchaseService;
+    }
+
+    //Se folosește de obicei pentru citirea datelor (ex: listarea tuturor entităților, obținerea unui element după ID etc.).
     @GetMapping
-    public List<Purchase> getAllPurchases() {
-        return purchases;
+    public String listPurchases(Model model) {
+        model.addAttribute("purchases", purchaseService.getAllPurchases());
+        return "purchase/index"; // templates/purchase/index.html
     }
 
-    @GetMapping("/{id}")
-    public Optional<Purchase> getPurchaseById(@PathVariable String id) {
-        return purchases.stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst();
-    }
 
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("purchase", new Purchase());
+        return "purchase/form"; // templates/purchase/form.html
+    }
+    //Preia datele din corpul cererii (request body) — de obicei trimise ca JSON.
+    //
+    //Apelează metoda din controller care procesează acele date.
     @PostMapping
-    public Purchase addPurchase(@RequestBody Purchase purchase) {
-        purchases.add(purchase);
-        return purchase;
+    public String createPurchase(@ModelAttribute("purchase") Purchase purchase) {
+        purchaseService.addPurchase(purchase);
+        return "redirect:/purchases";
     }
 
-    @PutMapping("/{id}")
-    public Purchase updatePurchase(@PathVariable String id, @RequestBody Purchase updatedPurchase) {
-        for (int i = 0; i < purchases.size(); i++) {
-            if (purchases.get(i).getId().equals(id)) {
-                purchases.set(i, updatedPurchase);
-                return updatedPurchase;
-            }
-        }
-        purchases.add(updatedPurchase);
-        return updatedPurchase;
-    }
-
-    @DeleteMapping("/{id}")
+    @PostMapping("/{id}/delete")
     public String deletePurchase(@PathVariable String id) {
-        boolean removed = purchases.removeIf(p -> p.getId().equals(id));
-        return removed ? "Purchase deleted successfully." : "Purchase not found.";
-    }
-
-    @GetMapping("/customer/{customerId}")
-    public List<Purchase> getPurchasesByCustomer(@PathVariable String customerId) {
-        List<Purchase> result = new ArrayList<>();
-        for (Purchase p : purchases) {
-            if (p.getCustomerId().equals(customerId)) {
-                result.add(p);
-            }
-        }
-        return result;
-    }
-
-    @GetMapping("/shop/{shopId}")
-    public List<Purchase> getPurchasesByShop(@PathVariable String shopId) {
-        List<Purchase> result = new ArrayList<>();
-        for (Purchase p : purchases) {
-            if (p.getShopId().equals(shopId)) {
-                result.add(p);
-            }
-        }
-        return result;
+        purchaseService.deletePurchase(id);
+        return "redirect:/purchases";
     }
 }
-

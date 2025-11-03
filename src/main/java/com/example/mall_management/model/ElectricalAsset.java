@@ -9,7 +9,7 @@ public class ElectricalAsset {
     private String floorId;
     private Type type;
     private AssetStatus status;
-
+    public ElectricalAsset() {}
     public ElectricalAsset(String id, String floorId, Type type, AssetStatus status) {
         this.id = id;
         this.floorId = floorId;

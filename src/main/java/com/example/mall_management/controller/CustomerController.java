@@ -2,49 +2,42 @@ package com.example.mall_management.controller;
 
 import com.example.mall_management.model.Customer;
 import com.example.mall_management.service.CustomerService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
-@RestController
-@RequestMapping("/api/customers")
+@Controller
+@RequestMapping("/customers")
 public class CustomerController {
 
     private final CustomerService customerService;
 
-    // 🔹 Injecție prin constructor (mai curat decât @Autowired pe câmp)
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
 
-    // ✅ Obține toți clienții
     @GetMapping
-    public List<Customer> getAllCustomers() {
-        return customerService.getAllCustomers();
+    public String listCustomers(Model model) {
+        model.addAttribute("customers", customerService.getAllCustomers());
+        return "customer/index"; // templates/customer/index.html
     }
 
-    // ✅ Obține un client după ID
-    @GetMapping("/{id}")
-    public Optional<Customer> getCustomerById(@PathVariable String id) {
-        return customerService.getCustomerById(id);
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("customer", new Customer());
+        return "customer/form"; // templates/customer/form.html
     }
 
-    // ✅ Creează un client nou
     @PostMapping
-    public Customer createCustomer(@RequestBody Customer customer) {
-        return customerService.createCustomer(customer);
+    public String createCustomer(@ModelAttribute("customer") Customer customer) {
+        customerService.createCustomer(customer);
+        return "redirect:/customers";
     }
 
-    // ✅ Actualizează un client existent
-    @PutMapping("/{id}")
-    public Customer updateCustomer(@PathVariable String id, @RequestBody Customer updatedCustomer) {
-        return customerService.updateCustomer(id, updatedCustomer);
-    }
 
-    // ✅ Șterge un client după ID
-    @DeleteMapping("/{id}")
-    public boolean deleteCustomer(@PathVariable String id) {
-        return customerService.deleteCustomer(id);
+    @PostMapping("/{id}/delete")
+    public String deleteCustomer(@PathVariable String id) {
+        customerService.deleteCustomer(id);
+        return "redirect:/customers";
     }
 }

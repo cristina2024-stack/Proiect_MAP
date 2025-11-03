@@ -1,75 +1,46 @@
+// src/main/java/com/example/mall_management/controller/MaintenanceStaffController.java
 package com.example.mall_management.controller;
 
 import com.example.mall_management.model.MaintenanceStaff;
-import com.example.mall_management.model.StaffAssignment;
+import com.example.mall_management.service.MaintenanceStaffService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-@RestController
+@Controller
 @RequestMapping("/maintenance-staff")
 public class MaintenanceStaffController {
 
-    private List<MaintenanceStaff> staffList = new ArrayList<>();
+    private final MaintenanceStaffService staffService;
+
+    public MaintenanceStaffController(MaintenanceStaffService staffService) {
+        this.staffService = staffService;
+    }
 
     @GetMapping
-    public List<MaintenanceStaff> getAllStaff() {
-        return staffList;
+    public String list(Model model) {
+        model.addAttribute("staffList", staffService.getAllStaff());
+        return "maintenance-staff/index";
     }
 
-    @GetMapping("/{id}")
-    public Optional<MaintenanceStaff> getStaffById(@PathVariable String id) {
-        return staffList.stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst();
+    // ATENȚIE: numele atributului este "staffForm"
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("staffForm", new MaintenanceStaff());
+        model.addAttribute("types", MaintenanceStaff.Type.values());
+        return "maintenance-staff/form";
     }
-
 
     @PostMapping
-    public MaintenanceStaff addStaff(@RequestBody MaintenanceStaff staff) {
-        staffList.add(staff);
-        return staff;
+    public String create(@ModelAttribute("staffForm") MaintenanceStaff form) {
+        MaintenanceStaff s = new MaintenanceStaff(form.getId(), form.getName(), form.getType());
+        staffService.addStaff(s);
+        return "redirect:/maintenance-staff";
     }
 
-    @PutMapping("/{id}")
-    public MaintenanceStaff updateStaff(@PathVariable String id, @RequestBody MaintenanceStaff updatedStaff) {
-        for (int i = 0; i < staffList.size(); i++) {
-            if (staffList.get(i).getId().equals(id)) {
-                staffList.set(i, updatedStaff);
-                return updatedStaff;
-            }
-        }
-        // Dacă nu există, adăugăm noul staff
-        staffList.add(updatedStaff);
-        return updatedStaff;
-    }
-
-    @DeleteMapping("/{id}")
-    public String deleteStaff(@PathVariable String id) {
-        boolean removed = staffList.removeIf(s -> s.getId().equals(id));
-        return removed ? "Staff deleted successfully." : "Staff not found.";
-    }
-    @PostMapping("/{id}/assignments")
-    public String addAssignment(@PathVariable String id, @RequestBody StaffAssignment assignment) {
-        Optional<MaintenanceStaff> staffOpt = staffList.stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst();
-
-        if (staffOpt.isPresent()) {
-            staffOpt.get().addAssignment(assignment);
-            return "Assignment added successfully.";
-        } else {
-            return "Staff not found.";
-        }
-    }
-    @GetMapping("/{id}/assignments")
-    public List<StaffAssignment> getAssignments(@PathVariable String id) {
-        Optional<MaintenanceStaff> staffOpt = staffList.stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst();
-
-        return staffOpt.map(MaintenanceStaff::getAssignments).orElseGet(ArrayList::new);
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable String id) {
+        staffService.deleteStaff(id);
+        return "redirect:/maintenance-staff";
     }
 }

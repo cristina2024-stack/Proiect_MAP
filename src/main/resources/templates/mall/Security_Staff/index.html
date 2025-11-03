@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista Personalului de Securitate</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f5f5f5; }
+        button { background-color: #c0392b; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 5px; }
+        button:hover { background-color: #e74c3c; }
+        a { text-decoration: none; color: #2c3e50; }
+    </style>
+</head>
+<body>
+<h1>Lista Personalului de Securitate</h1>
+
+<a th:href="@{/security-staff/new}">➕ Adaugă agent nou</a>
+<br><br>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nume</th>
+        <th>Număr Legitimație</th>
+        <th>Acțiuni</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="s : ${securityList}">
+        <td th:text="${s.id}">S1</td>
+        <td th:text="${s.name}">Ion Popescu</td>
+        <td th:text="${s.badgeNo}">B1234</td>
+        <td>
+            <form th:action="@{'/security-staff/' + ${s.id} + '/delete'}" method="post">
+                <button type="submit">Șterge</button>
+            </form>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(securityList)}">
+        <td colspan="4" style="text-align:center;">Niciun agent de securitate înregistrat</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+

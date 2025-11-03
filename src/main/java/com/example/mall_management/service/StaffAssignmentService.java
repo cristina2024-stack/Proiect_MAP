@@ -3,9 +3,11 @@ package com.example.mall_management.service;
 
 import com.example.mall_management.model.StaffAssignment;
 import com.example.mall_management.repository.StaffAssignment_Repository;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
-
+@Service
 public class StaffAssignmentService {
 
     private final StaffAssignment_Repository repository;
@@ -30,7 +32,7 @@ public class StaffAssignmentService {
     }
 
     public void deleteAssignment(String id) {
-        repository.delete(id);
+        repository.deleteById(id);
     }
 
     public StaffAssignment getAssignmentById(String id) {

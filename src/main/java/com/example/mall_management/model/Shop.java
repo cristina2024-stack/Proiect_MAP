@@ -12,7 +12,7 @@ public class Shop {
     private String ownerName;
     private double areaSqm;
     private List<Purchase> purchases = new ArrayList<>();
-
+     public Shop(){}
     public Shop(String id, String name, String ownerName, double areaSqm) {
         this.id = id;
         this.name = name;
@@ -22,7 +22,7 @@ public class Shop {
 
     public void addPurchase(Purchase p) { purchases.add(p); }
 
-    // getters/setters
+
     public String getId() { return id; }
     public String getName() { return name; }
     public String getOwnerName() { return ownerName; }

@@ -1,82 +1,76 @@
-// src/main/java/com/example/mall_management/repository/InMemoryRepository.java
 package com.example.mall_management.repository;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InMemoryRepository<T> implements CRUDRepository<T> {
+/**
+ * Repository generic simplu, care stochează obiecte în memorie.
+ * Este folosit ca bază pentru toate celelalte repository-uri.
+ */
+public class InMemoryRepository<T> {
 
-    private final List<T> storage = new ArrayList<>();
+    protected final List<T> items = new ArrayList<>();
     private final Class<T> type;
 
     public InMemoryRepository(Class<T> type) {
         this.type = type;
     }
 
-    @Override
-    public void save(T entity) {
-        String id = getIdValue(entity);
-        if (id == null) {
-            throw new IllegalArgumentException("Entity ID cannot be null");
-        }
-
-        T existing = findById(id);
-        if (existing == null) {
-            storage.add(entity);
-        } else {
-            update(entity);
-        }
+    /** Salvează un obiect nou */
+    public void save(T item) {
+        items.add(item);
     }
 
-    @Override
-    public void delete(String id) {
-        storage.removeIf(e -> id.equals(getIdValue(e)));
+    /** Returnează toate obiectele din memorie */
+    public List<T> findAll() {
+        return new ArrayList<>(items);
     }
 
-    @Override
-    public void update(T entity) {
-        String id = getIdValue(entity);
-        if (id == null) {
-            throw new IllegalArgumentException("Entity ID cannot be null");
-        }
-
-        for (int i = 0; i < storage.size(); i++) {
-            if (id.equals(getIdValue(storage.get(i)))) {
-                storage.set(i, entity);
-                return;
-            }
-        }
-
-        throw new IllegalArgumentException("Entity with ID " + id + " not found");
+    /** Șterge un obiect existent */
+    public void delete(T item) {
+        items.remove(item);
     }
 
-    @Override
+    /** Actualizează un obiect (îl înlocuiește dacă există deja) */
+    public void update(T item) {
+        if (items.contains(item)) {
+            items.remove(item);
+        }
+        items.add(item);
+    }
+
+    /** Golește complet lista */
+    public void clear() {
+        items.clear();
+    }
+
+    /**
+     * Caută un obiect după ID, presupunând că are o metodă publică getId().
+     */
     public T findById(String id) {
-        for (T entity : storage) {
-            if (id.equals(getIdValue(entity))) {
-                return entity;
+        try {
+            for (T item : items) {
+                Method getId = item.getClass().getMethod("getId");
+                Object value = getId.invoke(item);
+                if (value != null && value.equals(id)) {
+                    return item;
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    @Override
-    public List<T> findAll() {
-        return new ArrayList<>(storage);
-    }
-
     /**
-     * Obține valoarea câmpului "id" din entitate.
+     * ✅ Nou: Șterge un obiect pe baza ID-ului său.
+     * Evită eroarea „String cannot be converted to T”.
      */
-    private String getIdValue(T entity) {
-        try {
-            Field idField = type.getDeclaredField("id");
-            idField.setAccessible(true);
-            Object value = idField.get(entity);
-            return value != null ? value.toString() : null;
-        } catch (Exception e) {
-            throw new RuntimeException("Entity must have a field named 'id'", e);
+    public void deleteById(String id) {
+        T item = findById(id);
+        if (item != null) {
+            delete(item);
         }
     }
 }

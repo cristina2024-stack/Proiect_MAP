@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista Etajelor</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f5f5f5; }
+        button { background-color: #c0392b; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 5px; }
+        button:hover { background-color: #e74c3c; }
+        a { text-decoration: none; color: #2c3e50; }
+    </style>
+</head>
+<body>
+<h1>Lista Etajelor</h1>
+
+<a th:href="@{/floors/new}">➕ Adaugă etaj nou</a>
+<br><br>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nume</th>
+        <th>Număr</th>
+        <th>Suprafață</th>
+        <th>Acțiuni</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="f : ${floors}">
+        <td th:text="${f.id}">F1</td>
+        <td th:text="${f.name}">Etaj Principal</td>
+        <td th:text="${f.number}">1</td>
+        <td th:text="${f.area}">500.0</td>
+        <td>
+            <form th:action="@{'/floors/' + ${f.id} + '/delete'}" method="post">
+                <button type="submit">Șterge</button>
+            </form>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(floors)}">
+        <td colspan="5" style="text-align:center;">Niciun etaj înregistrat</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

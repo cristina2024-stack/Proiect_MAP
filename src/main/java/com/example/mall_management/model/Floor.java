@@ -14,7 +14,7 @@ public class Floor {
     private List<MaintenanceTask> tasks = new ArrayList<>();
     private List<ElectricalAsset> electricals = new ArrayList<>();
     private List<StaffAssignment> assignments = new ArrayList<>();
-
+    public Floor() {}
     public Floor(String id, int number) {
         this.id = id;
         this.number = number;

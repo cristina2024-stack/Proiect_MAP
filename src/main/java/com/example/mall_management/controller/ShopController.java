@@ -1,82 +1,53 @@
 package com.example.mall_management.controller;
 
-import com.example.mall_management.model.Purchase;
 import com.example.mall_management.model.Shop;
+import com.example.mall_management.service.ShopService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-@RestController
+@Controller
 @RequestMapping("/shops")
 public class ShopController {
 
-    private List<Shop> shops = new ArrayList<>();
+    private final ShopService shopService;
 
-
-    @GetMapping
-    public List<Shop> getAllShops() {
-        return shops;
+    public ShopController(ShopService shopService) {
+        this.shopService = shopService;
     }
 
 
-    @GetMapping("/{id}")
-    public Optional<Shop> getShopById(@PathVariable String id) {
-        return shops.stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst();
+    @GetMapping
+    public String listShops(Model model) {
+        model.addAttribute("shops", shopService.getAllShops());
+        return "shop/index";
+    }
+
+
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("shop", new Shop());
+        return "shop/form";
     }
 
 
     @PostMapping
-    public Shop addShop(@RequestBody Shop shop) {
-        shops.add(shop);
-        return shop;
+    public String createShop(@ModelAttribute("shop") Shop shop) {
+        shopService.addShop(shop);
+        return "redirect:/shops";
     }
 
-
-    @PutMapping("/{id}")
-    public Shop updateShop(@PathVariable String id, @RequestBody Shop updatedShop) {
-        for (int i = 0; i < shops.size(); i++) {
-            if (shops.get(i).getId().equals(id)) {
-                shops.set(i, updatedShop);
-                return updatedShop;
-            }
-        }
-        // dacă nu există, îl adăugăm
-        shops.add(updatedShop);
-        return updatedShop;
-    }
-
-    @DeleteMapping("/{id}")
+    @PostMapping("/{id}/delete")
     public String deleteShop(@PathVariable String id) {
-        boolean removed = shops.removeIf(s -> s.getId().equals(id));
-        return removed ? "Shop deleted successfully." : "Shop not found.";
+        shopService.deleteShop(id);
+        return "redirect:/shops";
+    }
+    //Nu căuta un fișier HTML sau o pagină JSP cu numele rezultatului — trimite direct conținutul returnat în corpul răspunsului (response body).”
+    @GetMapping("/ping")
+    @ResponseBody
+    public String ping() {
+        return "pong";
     }
 
-
-    @PostMapping("/{id}/purchases")
-    public String addPurchase(@PathVariable String id, @RequestBody Purchase purchase) {
-        Optional<Shop> shopOpt = shops.stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst();
-
-        if (shopOpt.isPresent()) {
-            shopOpt.get().addPurchase(purchase);
-            return "Purchase added successfully.";
-        } else {
-            return "Shop not found.";
-        }
-    }
-
-    @GetMapping("/{id}/purchases")
-    public List<Purchase> getPurchases(@PathVariable String id) {
-        Optional<Shop> shopOpt = shops.stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst();
-
-        return shopOpt.map(Shop::getPurchases).orElseGet(ArrayList::new);
-    }
 }
 
