@@ -20,15 +20,14 @@ public class MallController {
     @GetMapping
     public String listMalls(Model model) {
         model.addAttribute("malls", mallService.getAllMalls());
-        return "mall/index"; // templates/mall/index.html
+        return "mall/index";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("mall", new Mall());
-        return "mall/form"; // templates/mall/form.html
+        return "mall/form";
     }
-
     @PostMapping
     public String createMall(@ModelAttribute Mall mall) {
         mallService.addMall(mall);

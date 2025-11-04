@@ -10,25 +10,56 @@ public class Shoprepository extends InMemoryRepository<Shop> {
         super(Shop.class);
     }
 
-    // Găsește un magazin după ID
-    public Shop findById(String id) {
-        List<Shop> allShops = findAll();
-        for (Shop s : allShops) {
-            if (s.getId().equals(id)) {
-                return s;
-            }
-        }
-        return null;
-    }
 
-    // Găsește toate magazinele care au o arie mai mare decât un prag dat
-    public List<Shop> findByAreaGreaterThan(double minArea) {
+    public List<Shop> findByName(String name) {
         List<Shop> result = new ArrayList<>();
-        for (Shop s : findAll()) {
-            if (s.getAreaSqm() > minArea) {
-                result.add(s);
+        List<Shop> allShops = findAll();
+
+        for (int i = 0; i < allShops.size(); i++) {
+            Shop shop = allShops.get(i);
+            if (shop.getName() != null && shop.getName().equalsIgnoreCase(name)) {
+                result.add(shop);
             }
         }
         return result;
+    }
+
+
+    public List<Shop> findByOwnerName(String ownerName) {
+        List<Shop> result = new ArrayList<>();
+        List<Shop> allShops = findAll();
+
+        for (int i = 0; i < allShops.size(); i++) {
+            Shop shop = allShops.get(i);
+            if (shop.getOwnerName() != null && shop.getOwnerName().equalsIgnoreCase(ownerName)) {
+                result.add(shop);
+            }
+        }
+        return result;
+    }
+
+    public List<Shop> findByAreaGreaterThan(double minArea) {
+        List<Shop> result = new ArrayList<>();
+        List<Shop> allShops = findAll();
+
+        for (int i = 0; i < allShops.size(); i++) {
+            Shop shop = allShops.get(i);
+            if (shop.getAreaSqm() > minArea) {
+                result.add(shop);
+            }
+        }
+        return result;
+    }
+
+    public Shop findOneByName(String name) {
+        List<Shop> allShops = findAll();
+
+        for (int i = 0; i < allShops.size(); i++) {
+            Shop shop = allShops.get(i);
+            if (shop.getName() != null && shop.getName().equalsIgnoreCase(name)) {
+                return shop;
+            }
+        }
+        return null;
     }
 }
