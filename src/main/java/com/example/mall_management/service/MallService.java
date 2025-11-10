@@ -1,4 +1,3 @@
-// src/main/java/com/example/mall_management/service/MallService.java
 package com.example.mall_management.service;
 
 import com.example.mall_management.model.Mall;
@@ -16,16 +15,14 @@ public class MallService {
         this.repository = repository;
     }
 
-
     public Mall addMall(Mall mall) {
         repository.save(mall);
         return mall;
     }
 
-
     public Mall updateMall(String id, Mall mall) {
         mall.setId(id);
-        repository.update(mall);
+        repository.update(mall); // overload-ul din InFileRepository<T>
         return mall;
     }
 
@@ -33,8 +30,10 @@ public class MallService {
         repository.deleteById(id);
     }
 
+    // ✅ findById() -> Optional<Mall> : întoarcem Mall sau aruncăm excepție clară
     public Mall getMallById(String id) {
-        return repository.findById(id);
+        return repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Mall not found: " + id));
     }
 
     public List<Mall> getAllMalls() {

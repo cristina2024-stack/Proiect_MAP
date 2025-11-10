@@ -1,63 +1,66 @@
-// src/main/java/com/example/mall_management/repository/MaintenanceStaffRepository.java
 package com.example.mall_management.repository;
 
 import com.example.mall_management.model.MaintenanceStaff;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Repository în memorie pentru gestionarea personalului de mentenanță.
- * Extinde InMemoryRepository pentru a moșteni operațiile CRUD.
- */
-public class MaintenanceStaff_Repository extends InMemoryRepository<MaintenanceStaff> {
+@Repository
+public class MaintenanceStaff_Repository extends InFileRepository<MaintenanceStaff> {
 
     public MaintenanceStaff_Repository() {
-        super(MaintenanceStaff.class);
+        super(
+                "src/main/resources/data/maintenance_staff.json",
+                new EntityAdapter<MaintenanceStaff>() {
+                    @Override
+                    public String getId(MaintenanceStaff s) {
+                        return s.getId();
+                    }
+                    @Override
+                    public void setId(MaintenanceStaff s, String id) {
+                        s.setId(id);
+                    }
+                    @Override
+                    public void validate(MaintenanceStaff s) {
+                        // Validări opționale specifice entității (dacă dorești)
+                        // if (s.getName() == null || s.getName().isBlank())
+                        //     throw new IllegalArgumentException("Numele este obligatoriu");
+                    }
+                }
+        );
     }
 
+    // --------- Metode personalizate (păstrate și simplificate) ---------
 
     public List<MaintenanceStaff> findByType(MaintenanceStaff.Type type) {
-        List<MaintenanceStaff> result = new ArrayList<MaintenanceStaff>();
-        List<MaintenanceStaff> allStaff = findAll();
-
-        for (int i = 0; i < allStaff.size(); i++) {
-            MaintenanceStaff staff = allStaff.get(i);
+        List<MaintenanceStaff> result = new ArrayList<>();
+        for (MaintenanceStaff staff : findAll()) {
             if (staff.getType() == type) {
                 result.add(staff);
             }
         }
-
         return result;
     }
 
     public List<MaintenanceStaff> findWithAtLeastAssignments(int minAssignments) {
-        List<MaintenanceStaff> result = new ArrayList<MaintenanceStaff>();
-        List<MaintenanceStaff> allStaff = findAll();
-
-        for (int i = 0; i < allStaff.size(); i++) {
-            MaintenanceStaff staff = allStaff.get(i);
-            int count = 0;
-            if (staff.getAssignments() != null) {
-                count = staff.getAssignments().size();
-            }
+        List<MaintenanceStaff> result = new ArrayList<>();
+        for (MaintenanceStaff staff : findAll()) {
+            int count = (staff.getAssignments() == null) ? 0 : staff.getAssignments().size();
             if (count >= minAssignments) {
                 result.add(staff);
             }
         }
-
         return result;
     }
 
     public MaintenanceStaff findByName(String name) {
-        List<MaintenanceStaff> allStaff = findAll();
-
-        for (int i = 0; i < allStaff.size(); i++) {
-            MaintenanceStaff staff = allStaff.get(i);
-            if (staff.getName().equalsIgnoreCase(name)) {
+        if (name == null) return null;
+        for (MaintenanceStaff staff : findAll()) {
+            if (staff.getName() != null && staff.getName().equalsIgnoreCase(name)) {
                 return staff;
             }
         }
-
         return null;
     }
 }

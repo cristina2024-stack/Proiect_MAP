@@ -1,4 +1,3 @@
-// src/main/java/com/example/mall_management/service/StaffAssignmentService.java
 package com.example.mall_management.service;
 
 import com.example.mall_management.model.StaffAssignment;
@@ -6,37 +5,40 @@ import com.example.mall_management.repository.StaffAssignment_Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StaffAssignmentService {
 
     private final StaffAssignment_Repository repository;
 
-
-    public StaffAssignmentService() {
-        this.repository = new StaffAssignment_Repository();
-    }
-
+    // Constructor injection (folosește bean-ul Spring, nu 'new')
     public StaffAssignmentService(StaffAssignment_Repository repository) {
         this.repository = repository;
     }
 
-
-    public void addAssignment(StaffAssignment assignment) {
-        repository.save(assignment);
+    public StaffAssignment addAssignment(StaffAssignment assignment) {
+        return repository.save(assignment);
     }
 
-
-    public void updateAssignment(StaffAssignment assignment) {
-        repository.update(assignment);
+    // Update pe baza ID-ului din entitate (trebuie să fie setat)
+    public StaffAssignment updateAssignment(StaffAssignment assignment) {
+        return repository.update(assignment); // overload-ul este în InFileRepository
     }
 
-    public void deleteAssignment(String id) {
-        repository.deleteById(id);
+    // Upsert (creează dacă nu există, altfel înlocuiește)
+    public StaffAssignment saveOrUpdateAssignment(StaffAssignment assignment) {
+        return repository.saveOrUpdate(assignment);
     }
 
+    public boolean deleteAssignment(String id) {
+        return repository.deleteById(id);
+    }
+
+    // ✅ Rezolvat: repository.findById(id) returnează Optional — alegem să aruncăm excepție dacă nu găsim
     public StaffAssignment getAssignmentById(String id) {
-        return repository.findById(id);
+        return repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + id));
     }
 
     public List<StaffAssignment> getAllAssignments() {

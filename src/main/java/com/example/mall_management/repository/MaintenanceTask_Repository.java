@@ -1,55 +1,45 @@
-// src/main/java/com/example/mall_management/repository/MaintenanceTaskRepository.java
 package com.example.mall_management.repository;
 
 import com.example.mall_management.model.MaintenanceTask;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.stereotype.Repository;
 
-public class MaintenanceTask_Repository extends InMemoryRepository<MaintenanceTask> {
+@Repository
+public class MaintenanceTask_Repository extends InFileRepository<MaintenanceTask> {
 
     public MaintenanceTask_Repository() {
-        super(MaintenanceTask.class);
+        super(
+                "src/main/resources/data/maintenance_task.json",
+                new EntityAdapter<MaintenanceTask>() {
+
+                    @Override
+                    public String getId(MaintenanceTask t) {
+                        return t.getId();
+                    }
+
+                    @Override
+                    public void setId(MaintenanceTask t, String id) {
+                        // ✅ nu mai accesăm câmpul privat direct
+                        t.setId(id);
+                    }
+
+                    @Override
+                    public void validate(MaintenanceTask t) {
+                        if (t.getDescription() == null || t.getDescription().isBlank()) {
+                            throw new IllegalArgumentException("Description cannot be empty");
+                        }
+                        if (t.getStatus() == null) {
+                            throw new IllegalArgumentException("Status cannot be null");
+                        }
+                    }
+                }
+        );
     }
 
-    public List<MaintenanceTask> findByStatus(MaintenanceTask.Status status) {
-        List<MaintenanceTask> result = new ArrayList<MaintenanceTask>();
-        List<MaintenanceTask> allTasks = findAll();
-
-        for (int i = 0; i < allTasks.size(); i++) {
-            MaintenanceTask task = allTasks.get(i);
-            if (task.getStatus() == status) {
-                result.add(task);
-            }
-        }
-
-        return result;
-    }
-
-    public List<MaintenanceTask> findByAssignmentId(String assignmentId) {
-        List<MaintenanceTask> result = new ArrayList<MaintenanceTask>();
-        List<MaintenanceTask> allTasks = findAll();
-
-        for (int i = 0; i < allTasks.size(); i++) {
-            MaintenanceTask task = allTasks.get(i);
-            if (task.getAssignmentId() != null && task.getAssignmentId().equals(assignmentId)) {
-                result.add(task);
-            }
-        }
-
-        return result;
-    }
-
-    public MaintenanceTask findByDescription(String description) {
-        List<MaintenanceTask> allTasks = findAll();
-
-        for (int i = 0; i < allTasks.size(); i++) {
-            MaintenanceTask task = allTasks.get(i);
-            if (task.getDescription().equalsIgnoreCase(description)) {
-                return task;
-            }
-        }
-
-        return null;
+    // ----------- metode custom (dacă ai nevoie) ------------
+    public MaintenanceTask findByAssignmentId(String assignmentId) {
+        return findAll().stream()
+                .filter(t -> assignmentId != null && assignmentId.equals(t.getAssignmentId()))
+                .findFirst()
+                .orElse(null);
     }
 }
-
