@@ -2,33 +2,126 @@ package com.example.mall_management.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 public class Floor {
+
     private String id;
     private int number;
 
-    private List<Shop> shops = new ArrayList<>();
-    private List<MaintenanceTask> tasks = new ArrayList<>();
-    private List<ElectricalAsset> electricals = new ArrayList<>();
-    private List<StaffAssignment> assignments = new ArrayList<>();
-    public Floor() {}
+    // lucrăm cu ID-uri, nu cu obiecte
+    private List<String> shops = new ArrayList<>();
+    private List<String> tasks = new ArrayList<>();
+    private List<String> electricals = new ArrayList<>();
+    private List<String> assignments = new ArrayList<>();
+
+    // Constructor gol — necesar pentru Jackson și Spring
+    public Floor() {
+    }
+
     public Floor(String id, int number) {
         this.id = id;
         this.number = number;
     }
 
-    public void addShop(Shop s) { shops.add(s); }
-    public void addTask(MaintenanceTask t) { tasks.add(t); }
-    public void addElectrical(ElectricalAsset e) { electricals.add(e); }
-    public void addAssignment(StaffAssignment a) { assignments.add(a); }
+    // --------------------
+    // GETTERS & SETTERS
+    // --------------------
 
-    public String getId() { return id; }
-    public int getNumber() { return number; }
-    public List<Shop> getShops() { return shops; }
-    public List<MaintenanceTask> getTasks() { return tasks; }
-    public List<ElectricalAsset> getElectricals() { return electricals; }
-    public List<StaffAssignment> getAssignments() { return assignments; }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public List<String> getShops() {
+        return shops;
+    }
+
+    public void setShops(List<String> shops) {
+        this.shops = shops;
+    }
+
+    public List<String> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<String> tasks) {
+        this.tasks = tasks;
+    }
+
+    public List<String> getElectricals() {
+        return electricals;
+    }
+
+    public void setElectricals(List<String> electricals) {
+        this.electricals = electricals;
+    }
+
+    public List<String> getAssignments() {
+        return assignments;
+    }
+
+    public void setAssignments(List<String> assignments) {
+        this.assignments = assignments;
+    }
+
+    // --------------------
+    // METODE UTILE
+    // --------------------
+
+    public void addShopId(String shopId) {
+        if (shopId != null && !shopId.isBlank()) {
+            shops.add(shopId);
+        }
+    }
+
+    public void addTaskId(String taskId) {
+        if (taskId != null && !taskId.isBlank()) {
+            tasks.add(taskId);
+        }
+    }
+
+    public void addElectricalId(String assetId) {
+        if (assetId != null && !assetId.isBlank()) {
+            electricals.add(assetId);
+        }
+    }
+
+    public void addAssignmentId(String assignmentId) {
+        if (assignmentId != null && !assignmentId.isBlank()) {
+            assignments.add(assignmentId);
+        }
+    }
+
+    public int getShopCount() {
+        return shops == null ? 0 : shops.size();
+    }
+
+    // --------------------
+    // equals() & hashCode()
+    // --------------------
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Floor)) return false;
+        Floor floor = (Floor) o;
+        return Objects.equals(id, floor.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

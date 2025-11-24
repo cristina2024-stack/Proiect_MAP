@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Lista Personalului de Întreținere</title>
+    <title>Lista Personalului de Securitate</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { border-collapse: collapse; width: 100%; }
@@ -14,9 +14,10 @@
     </style>
 </head>
 <body>
-<h1>Lista Personalului de Întreținere</h1>
 
-<a th:href="@{/maintenance-staff/new}">➕ Adaugă angajat nou</a>
+<h1>Lista Personalului de Securitate</h1>
+
+<a th:href="@{/security-staff/new}">➕ Adaugă agent nou</a>
 <br><br>
 
 <table>
@@ -24,24 +25,29 @@
     <tr>
         <th>ID</th>
         <th>Nume</th>
-        <th>Tip</th>
+        <th>Nr. Legitimație</th>
         <th>Acțiuni</th>
     </tr>
     </thead>
+
     <tbody>
-    <tr th:each="staff : ${staffList}">
-        <td th:text="${staff.id}">S1</td>
-        <td th:text="${staff.name}">Ion Popescu</td>
-        <td th:text="${staff.type}">ELECTRICAL</td>
+
+    <tr th:each="s : ${securityList}">
+        <td th:text="${s.id}">S1</td>
+        <td th:text="${s.name}">John Doe</td>
+        <td th:text="${s.badgeNo}">B12345</td>
+
         <td>
-            <form th:action="@{'/maintenance-staff/' + ${staff.id} + '/delete'}" method="post">
+            <form th:action="@{'/security-staff/' + ${s.id} + '/delete'}" method="post">
                 <button type="submit">Șterge</button>
             </form>
         </td>
     </tr>
-    <tr th:if="${#lists.isEmpty(staffList)}">
-        <td colspan="4" style="text-align:center;">Niciun angajat înregistrat</td>
+
+    <tr th:if="${#lists.isEmpty(securityList)}">
+        <td colspan="4" style="text-align:center;">Niciun agent înregistrat</td>
     </tr>
+
     </tbody>
 </table>
 

@@ -10,33 +10,18 @@ import java.util.List;
 public class StaffAssignment_Repository extends InFileRepository<StaffAssignment> {
 
     public StaffAssignment_Repository() {
-        super(
-                "src/main/resources/data/staff_assignment.json",
-                new EntityAdapter<StaffAssignment>() {
-                    @Override
-                    public String getId(StaffAssignment a) {
-                        return a.getId();
-                    }
-
-                    @Override
-                    public void setId(StaffAssignment a, String id) {
-                        a.setId(id); // asigură-te că modelul are setId()
-                    }
-
-                    @Override
-                    public void validate(StaffAssignment a) {
-                        // Validări opționale
-                        // if (a.getShift() == null) throw new IllegalArgumentException("Shift cannot be null");
-                    }
-                }
-        );
+        // Fișierul trebuie să fie în src/main/resources/data/StaffAssignment.json
+        super("data/StaffAssignment.json", StaffAssignment.class);
     }
 
+    // --------------------- METODE PERSONALIZATE ---------------------
 
     public List<StaffAssignment> findByFloorId(String floorId) {
         List<StaffAssignment> result = new ArrayList<>();
         for (StaffAssignment a : findAll()) {
-            if (a.getFloorId() != null && a.getFloorId().equals(floorId)) {
+            if (a.getFloorId() != null &&
+                    a.getFloorId().equals(floorId)) {
+
                 result.add(a);
             }
         }
@@ -46,7 +31,9 @@ public class StaffAssignment_Repository extends InFileRepository<StaffAssignment
     public List<StaffAssignment> findByStaffId(String staffId) {
         List<StaffAssignment> result = new ArrayList<>();
         for (StaffAssignment a : findAll()) {
-            if (a.getStaffId() != null && a.getStaffId().equals(staffId)) {
+            if (a.getStaffId() != null &&
+                    a.getStaffId().equals(staffId)) {
+
                 result.add(a);
             }
         }
@@ -65,9 +52,10 @@ public class StaffAssignment_Repository extends InFileRepository<StaffAssignment
 
     public StaffAssignment findByStaffAndShift(String staffId, StaffAssignment.Shift shift) {
         for (StaffAssignment a : findAll()) {
-            if (a.getStaffId() != null
-                    && a.getStaffId().equals(staffId)
-                    && a.getShift() == shift) {
+            if (a.getStaffId() != null &&
+                    a.getStaffId().equals(staffId) &&
+                    a.getShift() == shift) {
+
                 return a;
             }
         }

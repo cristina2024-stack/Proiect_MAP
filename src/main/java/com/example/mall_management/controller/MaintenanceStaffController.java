@@ -17,27 +17,32 @@ public class MaintenanceStaffController {
         this.staffService = staffService;
     }
 
+    // LISTARE PERSONAL
     @GetMapping
     public String list(Model model) {
         model.addAttribute("staffList", staffService.getAllStaff());
+        // => src/main/resources/templates/maintenance-staff/index.html
         return "maintenance-staff/index";
     }
 
-    // ATENȚIE: numele atributului este "staffForm"
+    // FORMULAR CREARE
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("staffForm", new MaintenanceStaff());
         model.addAttribute("types", MaintenanceStaff.Type.values());
+        // => src/main/resources/templates/maintenance-staff/form.html
         return "maintenance-staff/form";
     }
 
+    // CREARE ANGAJAT
     @PostMapping
     public String create(@ModelAttribute("staffForm") MaintenanceStaff form) {
-        MaintenanceStaff s = new MaintenanceStaff(form.getId(), form.getName(), form.getType());
-        staffService.addStaff(s);
+        // form are deja id, name, type setate din formular
+        staffService.addStaff(form);
         return "redirect:/maintenance-staff";
     }
 
+    // ȘTERGERE ANGAJAT
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable String id) {
         staffService.deleteStaff(id);

@@ -2,74 +2,52 @@ package com.example.mall_management.service;
 
 import com.example.mall_management.model.Purchase;
 import com.example.mall_management.model.Shop;
+import com.example.mall_management.repository.Shoprepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ShopService {
 
-    // "Bază de date" simplă în memorie
-    private List<Shop> shops = new ArrayList<>();
+    private final Shoprepository repository;
 
-    public List<Shop> getAllShops() {
-        return shops;
+    public ShopService(Shoprepository repository) {
+        this.repository = repository;
     }
 
-    public Optional<Shop> getShopById(String id) {
-        for (Shop s : shops) {
-            if (s.getId().equals(id)) {
-                return Optional.of(s);
-            }
-        }
-        return Optional.empty();
+    public List<Shop> getAllShops() {
+        return repository.findAll();
+    }
+
+    public Shop getShopById(String id) {
+        return repository.findById(id);
     }
 
     public Shop addShop(Shop shop) {
-        shops.add(shop);
-        return shop;
+        return repository.save(shop);    // face persistenta în JSON
     }
 
     public Shop updateShop(String id, Shop updatedShop) {
-        for (int i = 0; i < shops.size(); i++) {
-            if (shops.get(i).getId().equals(id)) {
-                shops.set(i, updatedShop);
-                return updatedShop;
-            }
-        }
-        // dacă nu există, îl adăugăm
-        shops.add(updatedShop);
-        return updatedShop;
+        updatedShop.setId(id);
+        return repository.save(updatedShop);  // înlocuiește entry-ul existent
     }
 
     public boolean deleteShop(String id) {
-        for (int i = 0; i < shops.size(); i++) {
-            if (shops.get(i).getId().equals(id)) {
-                shops.remove(i);
-                return true;
-            }
-        }
-        return false;
+        return repository.deleteById(id);
     }
 
     public boolean addPurchaseToShop(String shopId, Purchase purchase) {
-        for (Shop s : shops) {
-            if (s.getId().equals(shopId)) {
-                s.addPurchase(purchase);
-                return true;
-            }
-        }
-        return false;
+        Shop s = repository.findById(shopId);
+        if (s == null) return false;
+
+        s.addPurchase(purchase);
+        repository.save(s); // actualizează JSON-ul
+        return true;
     }
 
     public List<Purchase> getPurchasesByShop(String shopId) {
-        for (Shop s : shops) {
-            if (s.getId().equals(shopId)) {
-                return s.getPurchases();
-            }
-        }
-        return new ArrayList<>();
+        Shop s = repository.findById(shopId);
+        return s == null ? List.of() : s.getPurchases();
     }
 }

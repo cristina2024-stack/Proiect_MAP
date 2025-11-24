@@ -1,0 +1,62 @@
+[
+  {
+    "id": "assign1",
+    "floorId": "floor1",
+    "staffId": "ms1",
+    "shift": "MORNING"
+  },
+  {
+    "id": "assign2",
+    "floorId": "floor2",
+    "staffId": "ms2",
+    "shift": "EVENING"
+  },
+  {
+    "id": "assign3",
+    "floorId": "floor2",
+    "staffId": "ms2",
+    "shift": "NIGHT"
+  },
+  {
+    "id": "assign4",
+    "floorId": "floor4",
+    "staffId": "ms4",
+    "shift": "MORNING"
+  },
+  {
+    "id": "assign5",
+    "floorId": "floor6",
+    "staffId": "ms5",
+    "shift": "EVENING"
+  },
+  {
+    "id": "assign6",
+    "floorId": "floor8",
+    "staffId": "ms7",
+    "shift": "NIGHT"
+  },
+  {
+    "id": "assign7",
+    "floorId": "floor8",
+    "staffId": "ms7",
+    "shift": "MORNING"
+  },
+  {
+    "id": "assign8",
+    "floorId": "floor8",
+    "staffId": "ms9",
+    "shift": "EVENING"
+  },
+  {
+    "id": "assign9",
+    "floorId": "floor9",
+    "staffId": "ms10",
+    "shift": "MORNING"
+  },
+  {
+    "id": "assign10",
+    "floorId": "floor10",
+    "staffId": "ms3",
+    "shift": "NIGHT"
+  }
+]

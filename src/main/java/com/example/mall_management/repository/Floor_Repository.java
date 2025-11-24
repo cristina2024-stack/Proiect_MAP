@@ -1,16 +1,24 @@
-// src/main/java/com/example/mall_management/repository/Floor_Repository.java
 package com.example.mall_management.repository;
 
 import com.example.mall_management.model.Floor;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Floor_Repository extends InMemoryRepository<Floor> {
+@Repository
+public class Floor_Repository extends InFileRepository<Floor> {
 
     public Floor_Repository() {
-        super(Floor.class);
+        super(
+                "src/main/resources/data/floor.json",   // NUMELE EXACT AL FIȘIERULUI
+                Floor.class
+        );
     }
 
+    // -------------------------------------
+    // METODE PERSONALIZATE
+    // -------------------------------------
 
     public Floor findByNumber(int number) {
         List<Floor> allFloors = findAll();
@@ -24,7 +32,7 @@ public class Floor_Repository extends InMemoryRepository<Floor> {
     }
 
     public List<Floor> findByShopCount(int shopCount) {
-        List<Floor> result = new ArrayList<Floor>();
+        List<Floor> result = new ArrayList<>();
         List<Floor> allFloors = findAll();
         for (int i = 0; i < allFloors.size(); i++) {
             Floor f = allFloors.get(i);
@@ -36,7 +44,7 @@ public class Floor_Repository extends InMemoryRepository<Floor> {
     }
 
     public List<Floor> findWithAtLeastShops(int minShops) {
-        List<Floor> result = new ArrayList<Floor>();
+        List<Floor> result = new ArrayList<>();
         List<Floor> allFloors = findAll();
         for (int i = 0; i < allFloors.size(); i++) {
             Floor f = allFloors.get(i);

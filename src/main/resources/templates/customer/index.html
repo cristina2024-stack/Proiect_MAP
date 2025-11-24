@@ -14,9 +14,14 @@
     </style>
 </head>
 <body>
+
 <h1>Lista Clienților</h1>
 
-<a th:href="@{/customers/new}">➕ Adaugă client nou</a>
+<!-- mesaj de eroare, dacă a venit din controller -->
+<div th:if="${errorMessage}" style="color: red; font-weight: bold; margin-bottom: 10px;"
+     th:text="${errorMessage}"></div>
+
+<a th:href="@{/customers/new}">Adaugă client nou</a>
 <br><br>
 
 <table>
@@ -25,25 +30,31 @@
         <th>ID</th>
         <th>Nume</th>
         <th>Email</th>
-        <th>Telefon</th>
+        <th>Currency</th>
         <th>Acțiuni</th>
     </tr>
     </thead>
+
     <tbody>
+
+    <!-- rândurile cu clienți -->
     <tr th:each="c : ${customers}">
         <td th:text="${c.id}">C1</td>
         <td th:text="${c.name}">Maria Ionescu</td>
         <td th:text="${c.email}">maria@example.com</td>
-        <td th:text="${c.phone}">0712345678</td>
+        <td th:text="${c.currency}">RON</td>
         <td>
-            <form th:action="@{'/customers/' + ${c.id} + '/delete'}" method="post">
+            <form th:action="@{|/customers/${c.id}/delete|}" method="post">
                 <button type="submit">Șterge</button>
             </form>
         </td>
     </tr>
+
+    <!-- mesaj când lista e goală -->
     <tr th:if="${#lists.isEmpty(customers)}">
         <td colspan="5" style="text-align:center;">Niciun client înregistrat</td>
     </tr>
+
     </tbody>
 </table>
 

@@ -10,27 +10,8 @@ import java.util.List;
 public class Purchase_Repository extends InFileRepository<Purchase> {
 
     public Purchase_Repository() {
-        super(
-                "src/main/resources/data/purchase.json",
-                new EntityAdapter<Purchase>() {
-                    @Override
-                    public String getId(Purchase p) {
-                        return p.getId();
-                    }
-
-                    @Override
-                    public void setId(Purchase p, String id) {
-                        p.setId(id);
-                    }
-
-                    @Override
-                    public void validate(Purchase p) {
-                        // Validări opționale
-                        if (p.getAmount() < 0)
-                            throw new IllegalArgumentException("Amount cannot be negative");
-                    }
-                }
-        );
+        // Fișierul trebuie să fie în src/main/resources/data/Purchase.json
+        super("data/Purchase.json", Purchase.class);
     }
 
     // ------------------- METODE PERSONALIZATE -------------------
@@ -38,7 +19,9 @@ public class Purchase_Repository extends InFileRepository<Purchase> {
     public List<Purchase> findByCustomerId(String customerId) {
         List<Purchase> result = new ArrayList<>();
         for (Purchase p : findAll()) {
-            if (p.getCustomerId() != null && p.getCustomerId().equals(customerId)) {
+            if (p.getCustomerId() != null &&
+                    p.getCustomerId().equals(customerId)) {
+
                 result.add(p);
             }
         }
@@ -48,7 +31,9 @@ public class Purchase_Repository extends InFileRepository<Purchase> {
     public List<Purchase> findByShopId(String shopId) {
         List<Purchase> result = new ArrayList<>();
         for (Purchase p : findAll()) {
-            if (p.getShopId() != null && p.getShopId().equals(shopId)) {
+            if (p.getShopId() != null &&
+                    p.getShopId().equals(shopId)) {
+
                 result.add(p);
             }
         }
@@ -58,7 +43,9 @@ public class Purchase_Repository extends InFileRepository<Purchase> {
     public List<Purchase> findByCurrency(String currency) {
         List<Purchase> result = new ArrayList<>();
         for (Purchase p : findAll()) {
-            if (p.getCurrency() != null && p.getCurrency().equalsIgnoreCase(currency)) {
+            if (p.getCurrency() != null &&
+                    p.getCurrency().equalsIgnoreCase(currency)) {
+
                 result.add(p);
             }
         }

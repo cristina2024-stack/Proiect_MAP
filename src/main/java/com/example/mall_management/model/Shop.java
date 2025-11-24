@@ -2,8 +2,10 @@ package com.example.mall_management.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Shop {
+
     private String id;
     private String name;
     private String ownerName;
@@ -19,17 +21,63 @@ public class Shop {
         this.areaSqm = areaSqm;
     }
 
-    public void addPurchase(Purchase p) { purchases.add(p); }
+    // PURCHASES
+    public void addPurchase(Purchase p) {
+        purchases.add(p);
+    }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }   // ✅ ADĂUGAT
+    public List<Purchase> getPurchases() {
+        return purchases;
+    }
 
-    public String getName() { return name; }
-    public String getOwnerName() { return ownerName; }
-    public double getAreaSqm() { return areaSqm; }
-    public List<Purchase> getPurchases() { return purchases; }
+    public void setPurchases(List<Purchase> purchases) {
+        this.purchases = purchases;
+    }
 
-    public void setName(String name) { this.name = name; }
-    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
-    public void setAreaSqm(double areaSqm) { this.areaSqm = areaSqm; }
+    // GETTERS & SETTERS
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public double getAreaSqm() {
+        return areaSqm;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public void setAreaSqm(double areaSqm) {
+        this.areaSqm = areaSqm;
+    }
+
+    // EQUALS & HASHCODE (IMPORTANT!)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Shop)) return false;
+        Shop shop = (Shop) o;
+        return Objects.equals(id, shop.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

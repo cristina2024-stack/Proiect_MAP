@@ -14,7 +14,14 @@
     </style>
 </head>
 <body>
+
 <h1>Lista Echipamentelor Electrice</h1>
+
+<!-- Mesaj de eroare -->
+<div th:if="${errorMessage}"
+     style="color:red; font-weight:bold; margin-bottom:15px;"
+     th:text="${errorMessage}">
+</div>
 
 <a th:href="@{/electrical-assets/new}">➕ Adaugă echipament nou</a>
 <br><br>
@@ -26,26 +33,32 @@
         <th>Etaj</th>
         <th>Tip</th>
         <th>Stare</th>
-        <th>Descriere</th>
         <th>Acțiuni</th>
     </tr>
     </thead>
+
     <tbody>
+
+    <!-- Rânduri echipamente -->
     <tr th:each="a : ${assets}">
         <td th:text="${a.id}">EA1</td>
         <td th:text="${a.floorId}">F1</td>
-        <td th:text="${a.type}">LIGHT</td>
-        <td th:text="${a.status}">ACTIVE</td>
-        <td th:text="${a.description}">Corp de iluminat</td>
+        <td th:text="${a.type}">GENERATOR</td>
+        <td th:text="${a.status}">OPERATIONAL</td>
+
         <td>
-            <form th:action="@{'/electrical-assets/' + ${a.id} + '/delete'}" method="post">
+            <form th:action="@{'/electrical-assets/' + ${a.id} + '/delete'}"
+                  method="post">
                 <button type="submit">Șterge</button>
             </form>
         </td>
     </tr>
+
+    <!-- Dacă lista e goală -->
     <tr th:if="${#lists.isEmpty(assets)}">
-        <td colspan="6" style="text-align:center;">Niciun echipament înregistrat</td>
+        <td colspan="5" style="text-align:center;">Niciun echipament înregistrat</td>
     </tr>
+
     </tbody>
 </table>
 

@@ -20,7 +20,7 @@ public class ElectricalAssetController {
     @GetMapping
     public String listAssets(Model model) {
         model.addAttribute("assets", assetService.getAllAssets());
-        return "electrical-asset/index"; // templates/electrical-asset/index.html
+        return "electrical_asset/index"; // templates/electrical-asset/index.html
     }
 
 
@@ -29,7 +29,7 @@ public class ElectricalAssetController {
         model.addAttribute("asset", new ElectricalAsset());
         model.addAttribute("types", ElectricalAsset.Type.values());
         model.addAttribute("statuses", ElectricalAsset.AssetStatus.values());
-        return "electrical-asset/form"; // templates/electrical-asset/form.html
+        return "electrical_asset/form"; // templates/electrical-asset/form.html
     }
 
 

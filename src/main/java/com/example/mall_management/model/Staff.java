@@ -24,7 +24,7 @@ public class Staff {
         return name;
     }
 
-    // Setters
+
     public void setId(String id) {
         this.id = id;
     }

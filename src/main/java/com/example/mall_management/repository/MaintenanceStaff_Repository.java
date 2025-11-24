@@ -11,27 +11,10 @@ public class MaintenanceStaff_Repository extends InFileRepository<MaintenanceSta
 
     public MaintenanceStaff_Repository() {
         super(
-                "src/main/resources/data/maintenance_staff.json",
-                new EntityAdapter<MaintenanceStaff>() {
-                    @Override
-                    public String getId(MaintenanceStaff s) {
-                        return s.getId();
-                    }
-                    @Override
-                    public void setId(MaintenanceStaff s, String id) {
-                        s.setId(id);
-                    }
-                    @Override
-                    public void validate(MaintenanceStaff s) {
-                        // Validări opționale specifice entității (dacă dorești)
-                        // if (s.getName() == null || s.getName().isBlank())
-                        //     throw new IllegalArgumentException("Numele este obligatoriu");
-                    }
-                }
+                "src/main/resources/data/MaintenanceStaff.json", // <-- EXACT ca numele fișierului tău
+                MaintenanceStaff.class
         );
     }
-
-    // --------- Metode personalizate (păstrate și simplificate) ---------
 
     public List<MaintenanceStaff> findByType(MaintenanceStaff.Type type) {
         List<MaintenanceStaff> result = new ArrayList<>();

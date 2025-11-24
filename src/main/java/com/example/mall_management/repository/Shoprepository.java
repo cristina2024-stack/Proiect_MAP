@@ -1,6 +1,7 @@
 package com.example.mall_management.repository;
 
 import com.example.mall_management.model.Shop;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -10,27 +11,14 @@ import java.util.List;
 public class Shoprepository extends InFileRepository<Shop> {
 
     public Shoprepository() {
-        super(
-                "src/main/resources/data/shop.json",
-                new EntityAdapter<Shop>() {
-                    @Override
-                    public String getId(Shop s) {
-                        return s.getId();
-                    }
-
-                    @Override
-                    public void setId(Shop s, String id) {
-                        s.setId(id);
-                    }
-
-                    @Override
-                    public void validate(Shop s) {
-                    }
-                }
-        );
+        // ATENȚIE:
+        //  - presupunem că InFileRepository are un constructor de forma:
+        //        InFileRepository(String resourcePath, Class<T> entityClass)
+        //  - și că încarcă fișierul din classpath (ex: resources/data/Shop.json)
+        super("data/Shop.json", Shop.class);
     }
 
-
+    // ------------------- METODE PERSONALIZATE -------------------
 
     public List<Shop> findByName(String name) {
         List<Shop> result = new ArrayList<>();

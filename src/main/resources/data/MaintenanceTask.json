@@ -1,0 +1,62 @@
+[
+  {
+    "id": "task1",
+    "description": "Verificare generator etaj 1",
+    "status": "PLANNED",
+    "assignmentId": "assign1"
+  },
+  {
+    "id": "task2",
+    "description": "Curățare zonă food court",
+    "status": "ACTIVE",
+    "assignmentId": "assign2"
+  },
+  {
+    "id": "task3",
+    "description": "Reparare panou electric etaj 2",
+    "status": "PLANNED",
+    "assignmentId": "assign3"
+  },
+  {
+    "id": "task4",
+    "description": "Schimbare siguranțe panou B1",
+    "status": "DONE",
+    "assignmentId": "assign4"
+  },
+  {
+    "id": "task5",
+    "description": "Verificare UPS întrerupător principal",
+    "status": "ACTIVE",
+    "assignmentId": "assign5"
+  },
+  {
+    "id": "task6",
+    "description": "Curățare scări rulante",
+    "status": "PLANNED",
+    "assignmentId": "assign6"
+  },
+  {
+    "id": "task7",
+    "description": "Reparare transformator etaj 4",
+    "status": "ACTIVE",
+    "assignmentId": "assign7"
+  },
+  {
+    "id": "task8",
+    "description": "Testare sistem iluminat urgență",
+    "status": "DONE",
+    "assignmentId": "assign8"
+  },
+  {
+    "id": "task9",
+    "description": "Igienizare toalete nivel 3",
+    "status": "PLANNED",
+    "assignmentId": "assign9"
+  },
+  {
+    "id": "task10",
+    "description": "Revizie anuală generator principal",
+    "status": "ACTIVE",
+    "assignmentId": "assign10"
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "mall1",
+    "name": "Mega Mall",
+    "city": "Bucharest",
+    "floors": ["floor1", "floor2", "floor3", "floor4"]
+  },
+  {
+    "id": "mall2",
+    "name": "Iulius Mall",
+    "city": "Cluj-Napoca",
+    "floors": ["floor5", "floor6", "floor7"]
+  },
+  {
+    "id": "mall3",
+    "name": "AFI Palace",
+    "city": "Bucharest",
+    "floors": ["floor1", "floor2"]
+  },
+  {
+    "id": "mall4",
+    "name": "City Park Mall",
+    "city": "Constanta",
+    "floors": ["floor8", "floor9", "floor10"]
+  },
+  {
+    "id": "mall5",
+    "name": "Banat Mall",
+    "city": "Timisoara",
+    "floors": ["floor3", "floor4"]
+  },
+  {
+    "id": "mall6",
+    "name": "Moldova Mall",
+    "city": "Iasi",
+    "floors": ["floor6"]
+  },
+  {
+    "id": "mall7",
+    "name": "Brasov Shopping Center",
+    "city": "Brasov",
+    "floors": ["floor7", "floor8"]
+  },
+  {
+    "id": "mall8",
+    "name": "Sibiu Retail Plaza",
+    "city": "Sibiu",
+    "floors": ["floor9"]
+  },
+  {
+    "id": "mall9",
+    "name": "Oradea Shopping City",
+    "city": "Oradea",
+    "floors": ["floor10", "floor1"]
+  },
+  {
+    "id": "mall10",
+    "name": "Arad Commercial Center",
+    "city": "Arad",
+    "floors": ["floor2", "floor3", "floor4"]
+  }
+]

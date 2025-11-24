@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ms1",
+    "name": "Andrei Pop",
+    "type": "ELECTRICAL",
+    "assignments": ["assign1"]
+  },
+  {
+    "id": "ms2",
+    "name": "Maria Ionescu",
+    "type": "CLEANING",
+    "assignments": ["assign2", "assign3"]
+  },
+  {
+    "id": "ms3",
+    "name": "George Mihai",
+    "type": "ELECTRICAL",
+    "assignments": []
+  },
+  {
+    "id": "ms4",
+    "name": "Elena Radu",
+    "type": "CLEANING",
+    "assignments": ["assign4"]
+  },
+  {
+    "id": "ms5",
+    "name": "Robert Stoica",
+    "type": "ELECTRICAL",
+    "assignments": ["assign5"]
+  },
+  {
+    "id": "ms6",
+    "name": "Ioana Matei",
+    "type": "CLEANING",
+    "assignments": []
+  },
+  {
+    "id": "ms7",
+    "name": "Vlad Dobre",
+    "type": "ELECTRICAL",
+    "assignments": ["assign6", "assign7"]
+  },
+  {
+    "id": "ms8",
+    "name": "Cristina Lupu",
+    "type": "CLEANING",
+    "assignments": []
+  },
+  {
+    "id": "ms9",
+    "name": "Radu Zamfir",
+    "type": "ELECTRICAL",
+    "assignments": ["assign8"]
+  },
+  {
+    "id": "ms10",
+    "name": "Ana Georgescu",
+    "type": "CLEANING",
+    "assignments": []
+  }
+]

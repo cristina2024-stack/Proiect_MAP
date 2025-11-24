@@ -1,0 +1,72 @@
+[
+  {
+    "id": "purchase1",
+    "customerId": "cust1",
+    "shopId": "shop2",
+    "currency": "EUR",
+    "amount": 120.50
+  },
+  {
+    "id": "purchase2",
+    "customerId": "cust3",
+    "shopId": "shop3",
+    "currency": "USD",
+    "amount": 89.99
+  },
+  {
+    "id": "purchase3",
+    "customerId": "cust2",
+    "shopId": "shop3",
+    "currency": "RON",
+    "amount": 230.00
+  },
+  {
+    "id": "purchase4",
+    "customerId": "cust4",
+    "shopId": "shop5",
+    "currency": "EUR",
+    "amount": 45.20
+  },
+  {
+    "id": "purchase5",
+    "customerId": "cust6",
+    "shopId": "shop7",
+    "currency": "RON",
+    "amount": 150.00
+  },
+  {
+    "id": "purchase6",
+    "customerId": "cust7",
+    "shopId": "shop9",
+    "currency": "USD",
+    "amount": 12.40
+  },
+  {
+    "id": "purchase7",
+    "customerId": "cust8",
+    "shopId": "shop9",
+    "currency": "EUR",
+    "amount": 29.99
+  },
+  {
+    "id": "purchase8",
+    "customerId": "cust9",
+    "shopId": "shop1",
+    "currency": "USD",
+    "amount": 199.00
+  },
+  {
+    "id": "purchase9",
+    "customerId": "cust10",
+    "shopId": "shop4",
+    "currency": "RON",
+    "amount": 75.80
+  },
+  {
+    "id": "purchase10",
+    "customerId": "cust5",
+    "shopId": "shop6",
+    "currency": "EUR",
+    "amount": 320.00
+  }
+]

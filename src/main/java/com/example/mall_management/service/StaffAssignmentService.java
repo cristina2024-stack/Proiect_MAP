@@ -5,7 +5,6 @@ import com.example.mall_management.repository.StaffAssignment_Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StaffAssignmentService {
@@ -23,7 +22,7 @@ public class StaffAssignmentService {
 
     // Update pe baza ID-ului din entitate (trebuie să fie setat)
     public StaffAssignment updateAssignment(StaffAssignment assignment) {
-        return repository.update(assignment); // overload-ul este în InFileRepository
+        return repository.update(assignment); // metoda este în InFileRepository
     }
 
     // Upsert (creează dacă nu există, altfel înlocuiește)
@@ -35,10 +34,12 @@ public class StaffAssignmentService {
         return repository.deleteById(id);
     }
 
-    // ✅ Rezolvat: repository.findById(id) returnează Optional — alegem să aruncăm excepție dacă nu găsim
     public StaffAssignment getAssignmentById(String id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + id));
+        StaffAssignment assignment = repository.findById(id);
+        if (assignment == null) {
+            throw new IllegalArgumentException("Assignment not found: " + id);
+        }
+        return assignment;
     }
 
     public List<StaffAssignment> getAllAssignments() {

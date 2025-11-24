@@ -1,0 +1,82 @@
+[
+  {
+    "id": "floor1",
+    "number": 0,
+    "shops": ["shop1", "shop2"],
+    "tasks": ["task1"],
+    "electricals": ["asset1", "asset9"],
+    "assignments": ["assign1"]
+  },
+  {
+    "id": "floor2",
+    "number": 1,
+    "shops": ["shop3"],
+    "tasks": ["task2", "task3"],
+    "electricals": ["asset2"],
+    "assignments": ["assign2", "assign3"]
+  },
+  {
+    "id": "floor3",
+    "number": 2,
+    "shops": ["shop4", "shop5"],
+    "tasks": [],
+    "electricals": ["asset3", "asset4"],
+    "assignments": []
+  },
+  {
+    "id": "floor4",
+    "number": 3,
+    "shops": [],
+    "tasks": ["task4"],
+    "electricals": ["asset5"],
+    "assignments": ["assign4"]
+  },
+  {
+    "id": "floor5",
+    "number": 4,
+    "shops": ["shop6"],
+    "tasks": [],
+    "electricals": ["asset6"],
+    "assignments": []
+  },
+  {
+    "id": "floor6",
+    "number": 5,
+    "shops": ["shop7", "shop8"],
+    "tasks": ["task5"],
+    "electricals": ["asset7"],
+    "assignments": ["assign5"]
+  },
+  {
+    "id": "floor7",
+    "number": 6,
+    "shops": [],
+    "tasks": [],
+    "electricals": [],
+    "assignments": []
+  },
+  {
+    "id": "floor8",
+    "number": 7,
+    "shops": ["shop9"],
+    "tasks": ["task6", "task7"],
+    "electricals": ["asset8"],
+    "assignments": ["assign6"]
+  },
+  {
+    "id": "floor9",
+    "number": 8,
+    "shops": ["shop10"],
+    "tasks": [],
+    "electricals": [],
+    "assignments": []
+  },
+  {
+    "id": "floor10",
+    "number": 9,
+    "shops": [],
+    "tasks": ["task8"],
+    "electricals": ["asset10"],
+    "assignments": []
+  }
+]

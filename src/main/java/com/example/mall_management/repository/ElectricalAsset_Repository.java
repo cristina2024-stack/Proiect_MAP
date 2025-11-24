@@ -11,29 +11,17 @@ public class ElectricalAsset_Repository extends InFileRepository<ElectricalAsset
 
     public ElectricalAsset_Repository() {
         super(
-                "src/main/resources/data/electrical_asset.json",
-                new EntityAdapter<ElectricalAsset>() {
-                    @Override
-                    public String getId(ElectricalAsset asset) {
-                        return asset.getId();
-                    }
-
-                    @Override
-                    public void setId(ElectricalAsset asset, String id) {
-                        asset.setId(id);
-                    }
-
-                    @Override
-                    public void validate(ElectricalAsset asset) {
-                    }
-                }
+                "src/main/resources/data/ElectricalAsset.json",
+                ElectricalAsset.class
         );
     }
 
-    // ✅ Metode personalizate (acestea au voie să existe în repository)
+    // ------------------- METODE PERSONALIZATE -------------------
+
     public ElectricalAsset findByFloorId(String floorId) {
         return findAll().stream()
-                .filter(asset -> asset.getFloorId().equals(floorId))
+                .filter(asset -> asset.getFloorId() != null &&
+                        asset.getFloorId().equals(floorId))
                 .findFirst()
                 .orElse(null);
     }

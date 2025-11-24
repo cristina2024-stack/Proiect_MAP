@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Lista Cumpărăturilor</title>
+    <title>Lista Tranzacțiilor</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { border-collapse: collapse; width: 100%; }
@@ -14,9 +14,10 @@
     </style>
 </head>
 <body>
-<h1>Lista Cumpărăturilor</h1>
 
-<a th:href="@{/purchases/new}">➕ Adaugă cumpărătură nouă</a>
+<h1>Lista Tranzacțiilor</h1>
+
+<a th:href="@{/purchases/new}">➕ Adaugă tranzacție</a>
 <br><br>
 
 <table>
@@ -30,22 +31,27 @@
         <th>Acțiuni</th>
     </tr>
     </thead>
+
     <tbody>
+
     <tr th:each="p : ${purchases}">
         <td th:text="${p.id}">P1</td>
-        <td th:text="${p.customerId}">C100</td>
-        <td th:text="${p.shopId}">S5</td>
-        <td th:text="${p.currency}">EUR</td>
-        <td th:text="${p.amount}">150.0</td>
+        <td th:text="${p.customerId}">C1</td>
+        <td th:text="${p.shopId}">S1</td>
+        <td th:text="${p.currency}">RON</td>
+        <td th:text="${p.amount}">100.0</td>
+
         <td>
             <form th:action="@{'/purchases/' + ${p.id} + '/delete'}" method="post">
                 <button type="submit">Șterge</button>
             </form>
         </td>
     </tr>
+
     <tr th:if="${#lists.isEmpty(purchases)}">
-        <td colspan="6" style="text-align:center;">Nicio cumpărătură înregistrată</td>
+        <td colspan="6" style="text-align:center;">Nicio tranzacție înregistrată</td>
     </tr>
+
     </tbody>
 </table>
 

@@ -1,258 +1,211 @@
 package com.example.mall_management.repository;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 
-import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
- * Repository generic bazat pe JSON care respectă cerințele:
- * - citește/scrie liste de obiecte într-un fișier JSON;
- * - asigură unicitatea și validitatea ID-urilor (String);
- * - persistă automat după fiecare operație CRUD;
- * - forțează fișierele sub resources/data/;
- * - verifică ≥10 înregistrări la start.
+ * Repo generic care salvează entități într-un fișier JSON.
+ * Presupune că entitatea T are metodele:
+ *   public String getId();
+ *   public void setId(String id);
  */
-public class InFileRepository<T> implements AbstractRepository<T> {
+public abstract class InFileRepository<T> {
 
-    /** Adapter pentru a accesa ID-ul fără reflecție */
-    public interface EntityAdapter<T> {
-        String getId(T entity);
-        void setId(T entity, String id);
-        default void validate(T entity) {}
+    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+    private final Path filePath;
+    private final Class<T> clazz;
+
+    /**
+     * @param relativePath ex: "data/customer.json"
+     *                     => fișierul va fi în: src/main/resources/data/customer.json
+     */
+    protected InFileRepository(String relativePath, Class<T> clazz) {
+        this.clazz = clazz;
+        this.filePath = Paths.get("src/main/resources").resolve(relativePath);
     }
 
-    private static final Pattern VALID_ID = Pattern.compile("^[A-Za-z0-9_-]{1,128}$");
+    // ================== UTILITARE PRIVATE ==================
 
-    private final ObjectMapper mapper;
-    private final File jsonFile;
-    private final EntityAdapter<T> adapter;
-
-
-    protected final List<T> data = new ArrayList<>();
-
-    public InFileRepository(String jsonPath, EntityAdapter<T> adapter) {
-        this.adapter = Objects.requireNonNull(adapter, "adapter");
-        ensureUnderResourcesData(jsonPath);
-        this.jsonFile = new File(Objects.requireNonNull(jsonPath, "jsonPath")).getAbsoluteFile();
-        this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-        initStorage();
-        loadFromDisk();
-        ensureAtLeastTenRecords();
-    }
-
-    @Override
-    public List<T> findAll() {
-        return new ArrayList<>(data);
-    }
-
-    @Override
-    public Optional<T> findById(String id) {
-        Objects.requireNonNull(id, "id");
-        return data.stream().filter(e -> id.equals(adapter.getId(e))).findFirst();
-    }
-
-    @Override
-    public T save(T entity) {
-        Objects.requireNonNull(entity, "entity");
-        adapter.validate(entity);
-
-        String id = adapter.getId(entity);
-        if (id == null || id.isBlank()) {
-            id = UUID.randomUUID().toString();
-            adapter.setId(entity, id);
+    private String extractId(T entity) {
+        try {
+            Method m = entity.getClass().getMethod("getId");
+            Object value = m.invoke(entity);
+            return value != null ? value.toString() : null;
+        } catch (Exception e) {
+            throw new RuntimeException("Entitatea " + entity.getClass().getSimpleName()
+                    + " nu are metoda getId()", e);
         }
-        ensureValidId(id);
-        if (existsById(id)) {
-            throw new IllegalArgumentException("Există deja entitate cu id='" + id + "'");
+    }
+
+    private void assignId(T entity, String entityId) {
+        try {
+            Method m = entity.getClass().getMethod("setId", String.class);
+            m.invoke(entity, entityId);
+        } catch (Exception e) {
+            throw new RuntimeException("Entitatea " + entity.getClass().getSimpleName()
+                    + " nu are metoda setId(String)", e);
+        }
+    }
+
+    // ================== OPERATII DE BAZĂ PE FIȘIER ==================
+
+    public synchronized List<T> findAll() {
+        if (!Files.exists(filePath)) {
+            return new ArrayList<>();
         }
 
-        data.add(entity);
-        persist();
-        return entity;
+        try {
+            byte[] bytes = Files.readAllBytes(filePath);
+
+            if (bytes.length == 0) {
+                return new ArrayList<>();
+            }
+
+            // folosim clazz ca să îi spunem lui Jackson că vrem List<T>, nu List<LinkedHashMap>
+            JavaType listType = objectMapper.getTypeFactory()
+                    .constructCollectionType(List.class, clazz);
+
+            return objectMapper.readValue(bytes, listType);
+
+        } catch (IOException e) {
+            System.err.println("Nu pot citi fișierul " + filePath + ": " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
+    protected synchronized void saveAll(List<T> items) {
+        try {
+            if (filePath.getParent() != null) {
+                Files.createDirectories(filePath.getParent());
+            }
 
-    public T update(T entity) {
-        Objects.requireNonNull(entity, "entity");
-        String id = adapter.getId(entity);
-        if (id == null || id.isBlank()) {
-            throw new NoSuchElementException("Nu pot face update: entitatea nu are ID setat");
+            objectMapper.writeValue(filePath.toFile(), items);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Nu pot scrie în fișierul " + filePath, e);
         }
-        return update(id, entity);
     }
 
-    @Override
-    public T update(String id, T entity) {
-        Objects.requireNonNull(id, "id");
-        Objects.requireNonNull(entity, "entity");
+    // ================== CRUD GENERIC ==================
 
-        ensureValidId(id);
-        if (!existsById(id)) {
-            throw new NoSuchElementException("Nu există entitate cu id='" + id + "'");
-        }
+    public synchronized T findById(String entityId) {
+        if (entityId == null) return null;
 
-        adapter.setId(entity, id);
-        adapter.validate(entity);
-
-        for (int i = 0; i < data.size(); i++) {
-            if (id.equals(adapter.getId(data.get(i)))) {
-                data.set(i, entity);
-                persist();
+        List<T> all = findAll();
+        for (T entity : all) {
+            String currentId = extractId(entity);
+            if (entityId.equals(currentId)) {
                 return entity;
             }
         }
-        // fallback (nu ar trebui să ajungi aici)
-        throw new NoSuchElementException("Nu există entitate cu id='" + id + "'");
+        return null;
     }
 
+    public synchronized T save(T entity) {
+        List<T> all = new ArrayList<>(findAll());
 
-    public T saveOrUpdate(T entity) {
-        Objects.requireNonNull(entity, "entity");
-        adapter.validate(entity);
-
-        String id = adapter.getId(entity);
-        if (id == null || id.isBlank()) {
-            // create
-            id = UUID.randomUUID().toString();
-            adapter.setId(entity, id);
-            ensureValidId(id);
-            data.add(entity);
-            persist();
-            return entity;
+        // dacă nu are ID, generăm unul nou
+        String entityId = extractId(entity);
+        if (entityId == null || entityId.isBlank()) {
+            entityId = UUID.randomUUID().toString();
+            assignId(entity, entityId);
         }
 
-        ensureValidId(id);
-        int idx = indexOfId(id);
-        if (idx >= 0) {
-            // replace
-            data.set(idx, entity);
-            persist();
-            return entity;
+        // căutăm dacă există deja un element cu acest ID
+        int indexToReplace = -1;
+        for (int i = 0; i < all.size(); i++) {
+            T current = all.get(i);
+            String currentId = extractId(current);
+            if (entityId.equals(currentId)) {
+                indexToReplace = i;
+                break;
+            }
+        }
+
+        if (indexToReplace >= 0) {
+            // există deja -> îl înlocuim
+            all.set(indexToReplace, entity);
         } else {
-            // create cu ID furnizat
-            if (existsById(id)) {
-                throw new IllegalArgumentException("Există deja entitate cu id='" + id + "'");
-            }
-            data.add(entity);
-            persist();
-            return entity;
+            // nu există -> îl adăugăm
+            all.add(entity);
         }
+
+        saveAll(all);
+        return entity;
     }
 
-    @Override
-    public boolean deleteById(String id) {
-        Objects.requireNonNull(id, "id");
-        boolean removed = data.removeIf(e -> id.equals(adapter.getId(e)));
-        if (removed) persist();
-        return removed;
-    }
+    public synchronized T update(T entity) {
+        String entityId = extractId(entity);
+        if (entityId == null || entityId.isBlank()) {
+            throw new IllegalArgumentException("Nu pot face update pe o entitate fără ID");
+        }
 
-    @Override
-    public long count() {
-        return data.size();
-    }
+        List<T> all = new ArrayList<>(findAll());
+        boolean found = false;
 
-    @Override
-    public boolean existsById(String id) {
-        Objects.requireNonNull(id, "id");
-        return data.stream().anyMatch(e -> id.equals(adapter.getId(e)));
-    }
+        for (int i = 0; i < all.size(); i++) {
+            T current = all.get(i);
+            String currentId = extractId(current);
 
-
-    protected int indexOfId(String id) {
-        for (int i = 0; i < data.size(); i++) {
-            if (id.equals(adapter.getId(data.get(i)))) {
-                return i;
+            if (entityId.equals(currentId)) {
+                all.set(i, entity);
+                found = true;
+                break;
             }
         }
-        return -1;
-    }
 
-
-    protected void ensureValidId(String id) {
-        if (!VALID_ID.matcher(id).matches()) {
-            throw new IllegalArgumentException("ID invalid (1–128 caractere, [A-Za-z0-9_-])");
+        if (!found) {
+            throw new NoSuchElementException("Nu există entitate cu id=" + entityId);
         }
+
+        saveAll(all);
+        return entity;
     }
 
-    private void ensureUnderResourcesData(String path) {
-        String norm = path.replace("\\", "/");
-        if (!norm.contains("resources/data/")) {
-            throw new IllegalArgumentException("Fișierul JSON trebuie să fie sub 'resources/data/'");
-        }
-    }
-
-    private void initStorage() {
-        try {
-            File dir = jsonFile.getParentFile();
-            if (dir != null && !dir.exists()) {
-                if (!dir.mkdirs() && !dir.exists()) {
-                    throw new IOException("Nu pot crea directorul: " + dir);
-                }
+    public synchronized T saveOrUpdate(T entity) {
+        String entityId = extractId(entity);
+        if (entityId == null || entityId.isBlank()) {
+            // nu are ID -> considerăm create
+            return save(entity);
+        } else {
+            // are ID, vedem dacă există deja
+            T existing = findById(entityId);
+            if (existing != null) {
+                return update(entity);
+            } else {
+                return save(entity);
             }
-            if (!jsonFile.exists()) {
-                mapper.writeValue(jsonFile, Collections.<T>emptyList());
+        }
+    }
+
+    public synchronized boolean deleteById(String entityId) {
+        if (entityId == null) return false;
+
+        List<T> all = new ArrayList<>(findAll());
+        boolean changed = false;
+
+        Iterator<T> it = all.iterator();
+        while (it.hasNext()) {
+            T current = it.next();
+            String currentId = extractId(current);
+
+            if (entityId.equals(currentId)) {
+                it.remove();
+                changed = true;
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Nu pot inițializa stocarea: " + jsonFile, e);
         }
-    }
 
-    private void loadFromDisk() {
-        try {
-            List<T> loaded = mapper.readValue(jsonFile, new TypeReference<List<T>>() {});
-            Set<String> seen = new HashSet<>();
-            for (T e : loaded) {
-                String id = adapter.getId(e);
-                if (id == null || id.isBlank()) {
-                    throw new IllegalStateException("Entitate fără ID în " + jsonFile.getName());
-                }
-                ensureValidId(id);
-                if (!seen.add(id)) {
-                    throw new IllegalStateException("ID duplicat '" + id + "' în " + jsonFile.getName());
-                }
-            }
-            data.clear();
-            data.addAll(loaded);
-        } catch (IOException e) {
-            throw new RuntimeException("Nu pot citi JSON-ul: " + jsonFile.getName(), e);
+        if (changed) {
+            saveAll(all);
         }
-    }
 
-
-    protected void persist() {
-        try {
-            File dir = jsonFile.getParentFile();
-            if (dir == null) dir = new File(".");
-            File tmp = File.createTempFile(jsonFile.getName(), ".tmp", dir);
-            mapper.writeValue(tmp, data);
-            Files.move(tmp.toPath(), jsonFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Nu pot salva JSON-ul: " + jsonFile.getName(), e);
-        }
-    }
-
-    private void ensureAtLeastTenRecords() {
-        if (data.size() < 10) {
-            throw new IllegalStateException(
-                    "Fișierul " + jsonFile.getName() + " trebuie să conțină cel puțin 10 înregistrări la start."
-            );
-        }
+        return changed;
     }
 }

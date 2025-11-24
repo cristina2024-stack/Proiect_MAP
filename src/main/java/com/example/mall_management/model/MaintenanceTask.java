@@ -1,5 +1,7 @@
 package com.example.mall_management.model;
 
+import java.util.Objects;
+
 public class MaintenanceTask {
 
     public enum Status { PLANNED, ACTIVE, DONE }
@@ -9,10 +11,9 @@ public class MaintenanceTask {
     private Status status;
     private String assignmentId;
 
-    // ✅ Constructor gol necesar pentru Jackson / JSON deserialize
-    public MaintenanceTask() {}
+    public MaintenanceTask() {
+    }
 
-    // ✅ Constructor complet
     public MaintenanceTask(String id, String description, Status status, String assignmentId) {
         this.id = id;
         this.description = description;
@@ -20,7 +21,7 @@ public class MaintenanceTask {
         this.assignmentId = assignmentId;
     }
 
-    // ✅ ID (getter + setter)
+    // GETTERS & SETTERS
     public String getId() {
         return id;
     }
@@ -29,7 +30,6 @@ public class MaintenanceTask {
         this.id = id;
     }
 
-    // ✅ Description
     public String getDescription() {
         return description;
     }
@@ -38,7 +38,6 @@ public class MaintenanceTask {
         this.description = description;
     }
 
-    // ✅ Status
     public Status getStatus() {
         return status;
     }
@@ -47,12 +46,25 @@ public class MaintenanceTask {
         this.status = status;
     }
 
-    // ✅ Assignment ID
     public String getAssignmentId() {
         return assignmentId;
     }
 
     public void setAssignmentId(String assignmentId) {
         this.assignmentId = assignmentId;
+    }
+
+    // EQUALS & HASHCODE (IMPORTANT!)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MaintenanceTask)) return false;
+        MaintenanceTask that = (MaintenanceTask) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

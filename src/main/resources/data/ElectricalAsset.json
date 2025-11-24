@@ -1,0 +1,62 @@
+[
+  {
+    "id": "asset1",
+    "floorId": "F1",
+    "type": "GENERATOR",
+    "status": "OPERATIONAL"
+  },
+  {
+    "id": "asset2",
+    "floorId": "F1",
+    "type": "TRANSFORMER",
+    "status": "MAINTENANCE"
+  },
+  {
+    "id": "asset3",
+    "floorId": "F2",
+    "type": "PANEL",
+    "status": "OPERATIONAL"
+  },
+  {
+    "id": "asset4",
+    "floorId": "F2",
+    "type": "UPS",
+    "status": "DOWN"
+  },
+  {
+    "id": "asset5",
+    "floorId": "F3",
+    "type": "OTHER",
+    "status": "OPERATIONAL"
+  },
+  {
+    "id": "asset6",
+    "floorId": "F3",
+    "type": "GENERATOR",
+    "status": "DOWN"
+  },
+  {
+    "id": "asset7",
+    "floorId": "F4",
+    "type": "TRANSFORMER",
+    "status": "OPERATIONAL"
+  },
+  {
+    "id": "asset8",
+    "floorId": "F4",
+    "type": "PANEL",
+    "status": "MAINTENANCE"
+  },
+  {
+    "id": "asset9",
+    "floorId": "B1",
+    "type": "UPS",
+    "status": "OPERATIONAL"
+  },
+  {
+    "id": "asset10",
+    "floorId": "B1",
+    "type": "OTHER",
+    "status": "DOWN"
+  }
+]

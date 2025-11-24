@@ -2,52 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Mall List</title>
+    <title>Lista Mall-urilor</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-        }
-        table {
-            width: 60%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        button {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #c0392b;
-        }
-        a.button {
-            display: inline-block;
-            background-color: #2ecc71;
-            color: white;
-            padding: 8px 12px;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        a.button:hover {
-            background-color: #27ae60;
-        }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f5f5f5; }
+        button { background-color: #c0392b; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 5px; }
+        button:hover { background-color: #e74c3c; }
+        a { text-decoration: none; color: #2c3e50; }
     </style>
 </head>
 <body>
 
 <h1>Lista Mall-urilor</h1>
 
-<a class="button" th:href="@{/malls/new}">Adaugă mall nou</a>
+<a th:href="@{/malls/new}">➕ Adaugă mall nou</a>
 <br><br>
 
 <table>
@@ -56,20 +26,30 @@
         <th>ID</th>
         <th>Nume</th>
         <th>Oraș</th>
+        <th>Nr. Etaje</th>
         <th>Acțiuni</th>
     </tr>
     </thead>
+
     <tbody>
-    <tr th:each="mall : ${malls}">
-        <td th:text="${mall.id}">1</td>
-        <td th:text="${mall.name}">Exemplu Mall</td>
-        <td th:text="${mall.city}">București</td>
+
+    <tr th:each="m : ${malls}">
+        <td th:text="${m.id}">M1</td>
+        <td th:text="${m.name}">Mall Example</td>
+        <td th:text="${m.city}">București</td>
+        <td th:text="${m.floorCount}">3</td>
+
         <td>
-            <form th:action="@{'/malls/' + ${mall.id} + '/delete'}" method="post">
+            <form th:action="@{'/malls/' + ${m.id} + '/delete'}" method="post">
                 <button type="submit">Șterge</button>
             </form>
         </td>
     </tr>
+
+    <tr th:if="${#lists.isEmpty(malls)}">
+        <td colspan="5" style="text-align:center;">Niciun mall înregistrat</td>
+    </tr>
+
     </tbody>
 </table>
 

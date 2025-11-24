@@ -19,13 +19,13 @@ public class SecurityStaffController {
     @GetMapping
     public String listSecurityStaff(Model model) {
         model.addAttribute("securityList", securityService.getAllSecurityStaff());
-        return "security-staff/index"; // templates/security-staff/index.html
+        return "security-staff/index";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("securityStaff", new Security_Staff());
-        return "security-staff/form"; // templates/security-staff/form.html
+        return "security-staff/form";
     }
 
     @PostMapping

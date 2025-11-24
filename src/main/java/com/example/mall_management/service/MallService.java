@@ -22,7 +22,7 @@ public class MallService {
 
     public Mall updateMall(String id, Mall mall) {
         mall.setId(id);
-        repository.update(mall); // overload-ul din InFileRepository<T>
+        repository.update(mall);
         return mall;
     }
 
@@ -30,10 +30,12 @@ public class MallService {
         repository.deleteById(id);
     }
 
-    // ✅ findById() -> Optional<Mall> : întoarcem Mall sau aruncăm excepție clară
     public Mall getMallById(String id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Mall not found: " + id));
+        Mall mall = repository.findById(id);
+        if (mall == null) {
+            throw new IllegalArgumentException("Mall not found: " + id);
+        }
+        return mall;
     }
 
     public List<Mall> getAllMalls() {

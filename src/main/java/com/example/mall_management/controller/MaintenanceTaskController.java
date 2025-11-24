@@ -1,67 +1,47 @@
 package com.example.mall_management.controller;
 
 import com.example.mall_management.model.MaintenanceTask;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/maintenance-tasks")
 public class MaintenanceTaskController {
 
-    // "Bază de date" în memorie
-    private List<MaintenanceTask> tasks = new ArrayList<>();
+    // "bază de date" simplă în memorie
+    private final List<MaintenanceTask> tasks = new ArrayList<>();
 
+    // LISTARE TASK-URI
     @GetMapping
-    public List<MaintenanceTask> getAllTasks() {
-        return tasks;
+    public String listTasks(Model model) {
+        model.addAttribute("tasks", tasks);
+        return "maintenance-tasks/index";   // templates/maintenance-tasks/index.html
     }
 
-    @GetMapping("/{id}")
-    public Optional<MaintenanceTask> getTaskById(@PathVariable String id) {
-        return tasks.stream()
-                .filter(t -> t.getId().equals(id))
-                .findFirst();
+    // FORMULAR CREARE
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("taskForm", new MaintenanceTask());
+        model.addAttribute("statuses", MaintenanceTask.Status.values());
+        return "maintenance-tasks/form";    // templates/maintenance-tasks/form.html
     }
 
+    // CREARE TASK
     @PostMapping
-    public MaintenanceTask addTask(@RequestBody MaintenanceTask task) {
-        tasks.add(task);
-        return task;
+    public String createTask(@ModelAttribute("taskForm") MaintenanceTask form) {
+        // aici poți pune validări sau generare ID dacă e gol
+        tasks.add(form);
+        return "redirect:/maintenance-tasks";
     }
 
-    @PutMapping("/{id}")
-    public MaintenanceTask updateTask(@PathVariable String id, @RequestBody MaintenanceTask updatedTask) {
-        for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i).getId().equals(id)) {
-                tasks.set(i, updatedTask);
-                return updatedTask;
-            }
-        }
-
-        tasks.add(updatedTask);
-        return updatedTask;
-    }
-
-    @PatchMapping("/{id}/status")
-    public String updateTaskStatus(@PathVariable String id, @RequestParam MaintenanceTask.Status status) {
-        Optional<MaintenanceTask> taskOpt = tasks.stream()
-                .filter(t -> t.getId().equals(id))
-                .findFirst();
-
-        if (taskOpt.isPresent()) {
-            taskOpt.get().setStatus(status);
-            return "Status updated successfully.";
-        } else {
-            return "Task not found.";
-        }
-    }
-
-    @DeleteMapping("/{id}")
+    // ȘTERGERE TASK
+    @PostMapping("/{id}/delete")
     public String deleteTask(@PathVariable String id) {
-        boolean removed = tasks.removeIf(t -> t.getId().equals(id));
-        return removed ? "Task deleted successfully." : "Task not found.";
+        tasks.removeIf(t -> id.equals(t.getId()));
+        return "redirect:/maintenance-tasks";
     }
 }
