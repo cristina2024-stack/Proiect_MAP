@@ -1,15 +1,28 @@
 package com.example.mall_management.model;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "shops")
 public class Shop {
 
-    private String id;
+    @Id
+    private String id;   // generat în service cu UUID
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(name = "owner_name", nullable = false)
     private String ownerName;
+
+    @Column(name = "area_sqm", nullable = false)
     private double areaSqm;
+
+    // deocamdată NU o mapăm în JPA, doar în memorie
+    @Transient
     private List<Purchase> purchases = new ArrayList<>();
 
     public Shop() {}
@@ -23,7 +36,7 @@ public class Shop {
 
     // PURCHASES
     public void addPurchase(Purchase p) {
-        purchases.add(p);
+        purchases.add(p);    // fara p.setShop(this);
     }
 
     public List<Purchase> getPurchases() {
